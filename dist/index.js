@@ -2863,8 +2863,11 @@ let cliMicrosoft365Path;
 function main() {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            const username = core.getInput("ADMIN_USERNAME", { required: true });
-            const password = core.getInput("ADMIN_PASSWORD", { required: true });
+            const username = core.getInput("ADMIN_USERNAME", { required: false });
+            const password = core.getInput("PASSWORD", { required: false });
+            const certificateEncoded = core.getInput("CERTIFICATE_ENCODED", { required: false });
+            const aadAppId = core.getInput("AAD_APP_ID", { required: false });
+            const tenantId = core.getInput("TENANT_ID", { required: false });
             core.info("ℹ️ Installing CLI for Microsoft 365...");
             const cliMicrosoft365InstallCommand = "npm install -g @pnp/cli-microsoft365";
             const options = {};
@@ -2878,7 +2881,22 @@ function main() {
             cliMicrosoft365Path = yield (0, io_1.which)("m365", true);
             core.info("✅ Completed installing CLI for Microsoft 365.");
             core.info("ℹ️ Logging in to the tenant...");
-            yield executeCLIMicrosoft365Command(`login --authType password --userName ${username} --password ${password}`);
+            if (username && password) {
+                yield executeCLIMicrosoft365Command(`login --authType password --userName ${username} --password ${password}`);
+            }
+            else if (certificateEncoded && aadAppId) {
+                let authCommand = `login --authType certificate --certificateBase64Encoded ${certificateEncoded} --appId ${aadAppId}`;
+                if (password) {
+                    authCommand += ` --password ${password}`;
+                }
+                if (tenantId) {
+                    authCommand += ` --tenant ${tenantId}`;
+                }
+                yield executeCLIMicrosoft365Command(authCommand);
+            }
+            else {
+                core.error("⛔ You must provide either ADMIN_USERNAME and PASSWORD parameters (if authenticating with user name / password), or at least following ones: CERTIFICATE_ENCODED and AAD_APP_ID (if authenticating with a certificate). More information here: https://pnp.github.io/cli-microsoft365/cmd/login/");
+            }
             yield executeCLIMicrosoft365Command("status");
             core.info("✅ Login successful.");
         }
