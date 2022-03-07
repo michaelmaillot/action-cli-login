@@ -66,7 +66,7 @@ jobs:
 
     # CLI for Microsoft 365 login action
     - name: Login to tenant
-      uses: pnp/action-cli-login@v3.0.0
+      uses: pnp/action-cli-login@v2.1.0
       with:
         ADMIN_USERNAME:  ${{ secrets.adminUsername }}
         PASSWORD:  ${{ secrets.adminPassword }}
@@ -105,7 +105,7 @@ jobs:
 
     # CLI for Microsoft 365 login action
     - name: Login to tenant
-      uses: pnp/action-cli-login@v3.0.0
+      uses: pnp/action-cli-login@v2.1.0
       with:
         AAD_APP_ID:  ${{ secrets.AppID }}
         CERTIFICATE_ENCODED: ${{ secrets.AppEncodedCertificate }}
@@ -121,7 +121,7 @@ If self-hosted runners are used for running the workflow, then please make sure 
 
 ## Release notes
 
-### v3.0.0
+### v2.1.0
 - Adds the certificate login options
 
 ### v2.0.0
